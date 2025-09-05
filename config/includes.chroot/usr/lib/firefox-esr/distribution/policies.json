@@ -1,0 +1,76 @@
+{
+    "policies": {
+      "DisableAppUpdate": true,
+      "DisplayBookmarksToolbar": true,
+      "NoDefaultBookmarks": true,
+      "OverrideFirstRunPage": "",
+      "OverridePostUpdatePage": "",
+      "Homepage": {
+        "URL": "https://duckduckgo.com",
+        "Locked": true,
+        "StartPage": "homepage"
+      },
+      "SearchEngines": {
+        "Default": "DuckDuckGo",
+        "PreventInstalls": true,
+        "Remove": ["Google", "Bing", "Amazon.com", "eBay", "Twitter"],
+        "Engines": [
+          {
+            "Name": "DuckDuckGo",
+            "URLTemplate": "https://duckduckgo.com/?q={searchTerms}",
+            "IconURL": "https://duckduckgo.com/favicon.ico",
+            "Alias": "ddg",
+            "Default": true
+          }
+        ]
+      },
+      "SearchSuggestEnabled": false,
+      "DisableTelemetry": true,
+      "CaptivePortal": false,
+      "Cookies": {
+        "Default": true,
+        "AcceptThirdParty": "never",
+        "RejectTracker": true
+      },
+      "DNSOverHTTPS": {
+        "Enabled": false
+      },
+      "UserMessaging": {
+        "WhatsNew": false,
+        "ExtensionRecommendations": false,
+        "FeatureRecommendations": false,
+        "UrlbarInterventions": false,
+        "SkipOnboarding": true
+      },
+      "DisableFeedbackCommands": true,
+      "DisableFirefoxStudies": true,
+      "DisablePocket": true,
+      "DontCheckDefaultBrowser": true,
+      "EnableTrackingProtection": {
+        "Value": true,
+        "Cryptomining": true,
+        "Fingerprinting": true
+      },
+      "FirefoxHome": {
+        "Search": true,
+        "TopSites": false,
+        "Highlights": false,
+        "Pocket": false,
+        "Snippets": false,
+        "Locked": true
+      },
+      "HardwareAcceleration": true,
+      "NetworkPrediction": false,
+      "PopupBlocking": {
+        "Allow": [],
+        "Default": true,
+        "Locked": true
+      },
+      "PromptForDownloadLocation": true,
+      "SupportMenu": {
+        "Title": "DuckDuckGo Support",
+        "URL": "https://help.duckduckgo.com",
+        "AccessKey": "S"
+      }
+    }
+  }

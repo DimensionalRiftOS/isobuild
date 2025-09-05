@@ -1,0 +1,24 @@
+[Desktop Entry]
+Version=1.0
+Name=System Update
+Comment=System package update and maintenance tool
+Comment[tr]=Sistem paket güncelleme ve bakım aracı
+Comment[es]=Herramienta de actualización y mantenimiento de paquetes del sistema
+Comment[fr]=Outil de mise à jour et de maintenance des paquets système
+Comment[de]=System-Paket-Update und Wartungstool
+Comment[ar]=أداة تحديث وصيانة حزم النظام
+Comment[ru]=Инструмент обновления и обслуживания системных пакетов
+Comment[zh]=系统包更新和维护工具
+Comment[ja]=システムパッケージの更新とメンテナンスツール
+Comment[ko]=시스템 패키지 업데이트 및 유지 관리 도구
+Comment[pt]=Ferramenta de atualização e manutenção de pacotes do sistema
+Comment[it]=Strumento di aggiornamento e manutenzione dei pacchetti di sistema
+Comment[nl]=Systeem pakket update en onderhoudstool
+Comment[sv]=Systempaketuppdatering och underhållsverktyg
+Comment[pl]=Narzędzie aktualizacji i konserwacji pakietów systemowych
+Exec=gnome-terminal -- bash -c "sudo /usr/bin/update; exec bash"
+Terminal=true
+Type=Application
+Icon=/usr/share/icons/rift/update.png
+Categories=System;
+StartupNotify=false

@@ -1,0 +1,2 @@
+Defaults umask_override
+Defaults umask=0022

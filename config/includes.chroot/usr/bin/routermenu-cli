@@ -1,0 +1,152 @@
+#!/bin/bash
+
+function start_i2p() {
+    echo "[*] Starting I2P as daemon..."
+    i2prouter start
+    echo "[*] I2P started in background."
+}
+
+function stop_i2p() {
+    echo "[*] Stopping I2P daemon..."
+    i2prouter stop
+    echo "[*] I2P stopped."
+}
+
+function graceful_stop() {
+    echo "[*] Stopping I2P gracefully (may take up to 11 minutes)..."
+    i2prouter graceful
+    echo "[*] I2P stopped gracefully."
+}
+
+function restart_i2p() {
+    echo "[*] Restarting I2P..."
+    i2prouter restart
+    echo "[*] I2P restarted."
+}
+
+function condrestart_i2p() {
+    echo "[*] Conditional restart (only if already running)..."
+    i2prouter condrestart
+    echo "[*] Conditional restart completed."
+}
+
+function status_i2p() {
+    echo "[*] I2P current status:"
+    i2prouter status
+    echo ""
+    echo "[*] I2P Service Status:"
+    sudo systemctl status i2p --no-pager -l
+}
+
+function install_i2p() {
+    echo "[*] Configuring I2P..."
+    sudo dpkg-reconfigure i2p
+    echo "[*] I2P configuration completed."
+}
+
+function remove_i2p() {
+    echo "[*] Disabling I2P service..."
+    sudo systemctl disable i2p.service
+    echo "[*] I2P service disabled."
+}
+
+function dump_i2p() {
+    echo "[*] Requesting Java thread dump..."
+    i2prouter dump
+    echo "[*] Thread dump requested."
+}
+
+function show_help() {
+    echo "Dimensional I2P Router - Manage I2P Network"
+    echo ""
+    echo "Usage: $0 [COMMAND]"
+    echo ""
+    echo "Commands:"
+    echo "  start        Start in the background as a daemon process"
+    echo "  stop         Stop if running as a daemon or in another console"
+    echo "  graceful     Stop gracefully, may take up to 11 minutes"
+    echo "  restart      Stop if running and then start"
+    echo "  condrestart  Restart only if already running"
+    echo "  status       Query the current status"
+    echo "  install      Configure I2P using dpkg-reconfigure"
+    echo "  remove       Disable I2P service"
+    echo "  dump         Request a Java thread dump if running"
+    echo "  help         Show this help message"
+    echo ""
+    echo "Examples:"
+    echo "  $0 start"
+    echo "  $0 status"
+    echo "  $0 install"
+}
+
+# Parameter handling
+if [ $# -eq 0 ]; then
+    # No parameters - show interactive menu
+    echo "Dimensional I2P Router Menu"
+    echo "1) Start I2P (daemon)"
+    echo "2) Stop I2P"
+    echo "3) Graceful Stop"
+    echo "4) Restart I2P"
+    echo "5) Conditional Restart"
+    echo "6) Show Status"
+    echo "7) Configure I2P"
+    echo "8) Disable I2P Service"
+    echo "9) Thread Dump"
+    echo "10) Help"
+    echo "11) Exit"
+    read -p "Select an option [1-11]: " choice
+
+    case $choice in
+        1) start_i2p ;;
+        2) stop_i2p ;;
+        3) graceful_stop ;;
+        4) restart_i2p ;;
+        5) condrestart_i2p ;;
+        6) status_i2p ;;
+        7) install_i2p ;;
+        8) remove_i2p ;;
+        9) dump_i2p ;;
+        10) show_help ;;
+        11) echo "Exiting..."; exit 0 ;;
+        *) echo "Invalid selection"; exit 1 ;;
+    esac
+else
+    # Parameter mode
+    case $1 in
+        start)
+            start_i2p
+            ;;
+        stop)
+            stop_i2p
+            ;;
+        graceful)
+            graceful_stop
+            ;;
+        restart)
+            restart_i2p
+            ;;
+        condrestart)
+            condrestart_i2p
+            ;;
+        status)
+            status_i2p
+            ;;
+        install)
+            install_i2p
+            ;;
+        remove)
+            remove_i2p
+            ;;
+        dump)
+            dump_i2p
+            ;;
+        help|--help|-h)
+            show_help
+            ;;
+        *)
+            echo "Error: Unknown command '$1'"
+            echo "Use '$0 help' for usage information"
+            exit 1
+            ;;
+    esac
+fi

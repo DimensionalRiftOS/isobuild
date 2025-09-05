@@ -1,0 +1,20 @@
+#!/bin/bash
+
+systemctl enable calamares-remove.service
+
+systemctl enable rift-firstboot.service
+
+systemctl enable rift-liveboot.service
+
+systemctl enable wayland-disable.service
+
+systemctl enable rift-cleanup-temp.service
+
+systemctl enable rift-cleanup-swap.service
+
+systemctl enable rift-cleanup-logs.service
+
+systemctl enable permission-hardening.service
+
+systemctl enable haveged
+

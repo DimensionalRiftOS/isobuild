@@ -1,0 +1,11 @@
+[Unit]
+Description=Permission System Hardening Service
+After=network.target
+
+[Service]
+Type=oneshot
+ExecStart=/usr/bin/permissionhardening
+RemainAfterExit=yes
+
+[Install]
+WantedBy=multi-user.target 

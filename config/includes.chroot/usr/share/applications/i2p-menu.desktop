@@ -1,0 +1,24 @@
+[Desktop Entry]
+Version=1.0
+Name=I2P Menu
+Comment=I2P Router GUI Menu
+Comment[tr]=I2P Yönlendirici GUI Menüsü
+Comment[es]=Menú GUI del enrutador I2P
+Comment[fr]=Menu GUI du routeur I2P
+Comment[de]=I2P Router GUI-Menü
+Comment[ar]=قائمة واجهة المستخدم الرسومية لجهاز التوجيه I2P
+Comment[ru]=Графическое меню маршрутизатора I2P
+Comment[zh]=I2P 路由器图形界面菜单
+Comment[ja]=I2PルーターGUIメニュー
+Comment[ko]=I2P 라우터 GUI 메뉴
+Comment[pt]=Menu GUI do roteador I2P
+Comment[it]=Menu GUI del router I2P
+Comment[nl]=I2P-router GUI-menu
+Comment[sv]=I2P-router GUI-meny
+Comment[pl]=Menu GUI routera I2P
+Exec=i2p-routermenu
+Icon=/usr/share/icons/rift/info.png
+Terminal=false
+Type=Application
+StartupWMClass=i2p-routermenu
+Categories=Network;

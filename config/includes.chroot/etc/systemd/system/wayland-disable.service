@@ -1,0 +1,11 @@
+[Unit]
+Description=Disable Wayland before GDM
+Before=gdm.service
+Wants=graphical.target
+
+[Service]
+Type=oneshot
+ExecStart=/usr/bin/wayland-disable
+
+[Install]
+WantedBy=graphical.target

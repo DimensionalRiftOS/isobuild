@@ -1,0 +1,63 @@
+#!/bin/bash
+
+# Must be run as root
+if [ "$EUID" -ne 0 ]; then
+    echo "ERROR: This script must be run as root."
+    exit 1
+fi
+
+echo "[+] Starting permission hardening..."
+
+# Critical files and their permissions: mode:uid:gid
+declare -A FILES=(
+    ["/etc/passwd"]="644:0:0"
+    ["/etc/shadow"]="600:0:0"
+    ["/etc/group"]="644:0:0"
+    ["/etc/gshadow"]="600:0:0"
+    ["/etc/sudoers"]="440:0:0"
+    ["/etc/hosts"]="644:0:0"
+)
+
+# Critical directories
+declare -A DIRS=(
+    ["/etc/sudoers.d"]="750:0:0"
+    ["/root"]="700:0:0"
+    ["/var/log"]="755:0:0"
+    ["/boot"]="755:0:0"
+    ["/etc/cron.d"]="755:0:0"
+    ["/etc/cron.daily"]="755:0:0"
+    ["/etc/cron.hourly"]="755:0:0"
+    ["/etc/cron.monthly"]="755:0:0"
+    ["/etc/cron.weekly"]="755:0:0"
+)
+
+# Secure files
+for path in "${!FILES[@]}"; do
+    perms="${FILES[$path]}"
+    mode="${perms%%:*}"
+    uidgid="${perms#*:}"
+    uid="${uidgid%%:*}"
+    gid="${uidgid##*:}"
+
+    if [ -f "$path" ]; then
+        chmod "$mode" "$path"
+        chown "$uid:$gid" "$path"
+    fi
+done
+
+# Secure directories
+for path in "${!DIRS[@]}"; do
+    perms="${DIRS[$path]}"
+    mode="${perms%%:*}"
+    uidgid="${perms#*:}"
+    uid="${uidgid%%:*}"
+    gid="${uidgid##*:}"
+
+    if [ -d "$path" ]; then
+        chmod "$mode" "$path"
+        chown "$uid:$gid" "$path"
+    fi
+done
+
+
+echo "[+] Permission hardening completed."

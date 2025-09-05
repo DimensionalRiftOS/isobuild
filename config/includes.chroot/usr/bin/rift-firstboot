@@ -1,0 +1,21 @@
+#!/bin/bash
+
+# Check the filesystem type of root
+if grep -q overlay /proc/mounts; then
+    echo "Running on a live system."
+    exit 0
+fi
+
+# Remove NVIDIA drivers
+apt purge -y nvidia*
+
+# Clean up unneeded dependencies
+apt autoremove -y
+
+# Disable the service so it won't run again
+systemctl disable rift-firstboot.service
+
+rm -rf /usr/bin/rift-firstboot
+rm -rf /etc/systemd/system/rift-firstboot.service
+
+echo "Finished."

@@ -1,0 +1,11 @@
+PRETTY_NAME="Dimensional Rift"
+NAME="Dimensional Rift"
+ID=debian
+ID_LIKE=debian
+VERSION_CODENAME=ROOT0
+RELEASE_TYPE=stable
+VENDOR_NAME="root0emir"
+VERSION="1.0"
+VERSION_ID="1.0"
+
+

@@ -1,0 +1,14 @@
+#!/bin/bash
+
+# it is an unnecessary service for privacy focused distro 
+systemctl mask nvidia-persistenced.service
+
+systemctl mask avahi-daemon.service
+
+systemctl mask cups.service
+
+systemctl mask bluetooth.service
+
+systemctl mask avahi-daemon.socket
+
+systemctl mask tor.service

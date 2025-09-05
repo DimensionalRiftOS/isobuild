@@ -1,0 +1,5 @@
+#!/bin/bash
+
+/bin/sed -i 's/^#WaylandEnable=false/WaylandEnable=false/' /etc/gdm3/daemon.conf
+
+systemctl disable wayland-disable.service

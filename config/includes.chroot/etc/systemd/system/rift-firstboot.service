@@ -1,0 +1,11 @@
+[Unit]
+Description=Dimensional Rift - First Boot Settings
+After=multi-user.target
+Wants=multi-user.target
+
+[Service]
+Type=oneshot
+ExecStart=/usr/bin/rift-firstboot
+
+[Install]
+WantedBy=multi-user.target

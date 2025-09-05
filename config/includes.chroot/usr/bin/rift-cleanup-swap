@@ -1,0 +1,52 @@
+#!/bin/bash
+
+# SWAP memory cleanup for Dimensional Rift
+# No logging to avoid traces
+
+# Check if swapoff and swapon commands exist
+if ! command -v swapoff >/dev/null 2>&1 || ! command -v swapon >/dev/null 2>&1; then
+    exit 1
+fi
+
+# Get list of swap devices
+SWAP_DEVICES=$(swapon --show=NAME --noheadings 2>/dev/null)
+
+if [ -z "$SWAP_DEVICES" ]; then
+    exit 0
+fi
+
+# Enhanced swap clearing process
+# 1. Disable all swap
+swapoff -a 2>/dev/null
+
+# 2. Overwrite swap partitions/files with random data
+while IFS= read -r swap_device; do
+    if [ -b "$swap_device" ]; then
+        # Block device - overwrite with random data (limited to avoid long delays)
+        dd if=/dev/urandom of="$swap_device" bs=1M count=10 2>/dev/null
+    elif [ -f "$swap_device" ]; then
+        # Swap file - overwrite completely
+        dd if=/dev/urandom of="$swap_device" bs=1M count=10 2>/dev/null
+    fi
+done <<< "$SWAP_DEVICES"
+
+# 3. Re-enable swap
+swapon -a 2>/dev/null
+
+# 4. Clear any swap-related logs that might have been created
+for log_file in /var/log/kern.log /var/log/syslog /var/log/messages; do
+    if [ -f "$log_file" ]; then
+        # Remove swap-related entries
+        sed -i '/swap/Id' "$log_file" 2>/dev/null
+        sed -i '/swapon/Id' "$log_file" 2>/dev/null
+        sed -i '/swapoff/Id' "$log_file" 2>/dev/null
+    fi
+done
+
+# 5.drop kernel cache and ram clean 
+echo 3 > /proc/sys/vm/drop_caches
+echo 1 > /proc/sys/vm/oom_kill_allocating_task
+echo 0 > /proc/sys/vm/oom_dump_tasks
+smem-secure-delete -fllv
+
+exit 0

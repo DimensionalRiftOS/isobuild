@@ -1,0 +1,39 @@
+[org/gnome/shell]
+favorite-apps=['calamares-install-debian.desktop', 'firefox-esr.desktop', 'firefox-clearnet.desktop', 'i2p-menu.desktop', 'update.desktop', 'org.gnome.Nautilus.desktop', 'org.gnome.Terminal.desktop']
+
+[org/gnome/desktop/wm/preferences]
+button-layout='appmenu:minimize,close'
+
+[org/gnome/desktop/interface]
+gtk-theme='Adwaita-dark'
+color-scheme='prefer-dark'
+
+[org/gnome/desktop/background]
+color-shading-type='solid'
+picture-options='zoom'
+picture-uri='file:///usr/share/backgrounds/default.png'
+picture-uri-dark='file:///usr/share/backgrounds/default.png'
+primary-color='#000000000000'
+secondary-color='#000000000000'
+
+[org/gnome/shell/extensions/user-theme]
+name='Adwaita-dark'
+
+[org/gnome/terminal/legacy/profiles:/:b1dcc9dd-5262-4d8d-a863-c897e6d979b9]
+visible-name='Dimensional Rift Terminal'
+foreground-color='#AEEEEE'
+background-color='#000000'
+bold-color='#FFFFFF'
+use-theme-colors=false
+use-transparent-background=true
+background-transparency-percent=9
+palette=['#2E3434', '#CC0000', '#4E9A06', '#C4A000', '#3465A4', '#75507B', '#06989A', '#D3D7CF', '#555753', '#EF2929', '#8AE234', '#FCE94F', '#729FCF', '#AD7FA8', '#34E2E2', '#EEEEEC']
+scrollbar-policy='always'
+scrollback-unlimited=true
+scrollback-lines=16384
+
+[org/gnome/system/location]
+enabled=false
+
+[org/gnome/desktop/peripherals/touchpad]
+tap-to-click=true

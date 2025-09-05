@@ -1,0 +1,11 @@
+#!/bin/bash
+set -e
+
+echo "dconf..."
+
+mkdir -p /etc/dconf/db/local.d
+mkdir -p /etc/skel/.config/dconf
+
+dconf compile /etc/skel/.config/dconf/user /etc/dconf/db/local.d
+
+dconf update

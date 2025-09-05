@@ -1,0 +1,14 @@
+#!/bin/bash
+
+echo "[+] Starting system updates..."
+
+sudo apt-get update -y
+sudo apt-get upgrade -y
+sudo apt-get autoremove -y
+sudo apt-get autoclean -y
+sudo apt-get dist-upgrade -y
+sudo apt-get upgrade -s | grep "upgraded"
+
+echo "[+] System updates completed!"
+echo "[!] You can close this terminal now."
+

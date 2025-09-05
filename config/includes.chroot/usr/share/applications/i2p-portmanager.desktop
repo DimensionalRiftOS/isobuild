@@ -1,0 +1,24 @@
+[Desktop Entry]
+Version=1.0
+Name=I2P Port Manager
+Comment=Manage I2P network ports and iptables firewall rules
+Comment[tr]=I2P ağ portlarını ve iptables güvenlik duvarı kurallarını yönet
+Comment[es]=Gestionar puertos de red I2P y reglas de firewall iptables
+Comment[fr]=Gérer les ports réseau I2P et les règles du pare-feu iptables
+Comment[de]=I2P-Netzwerkports und iptables-Firewall-Regeln verwalten
+Comment[ar]=إدارة منافذ شبكة I2P وقواعد جدار الحماية iptables
+Comment[ru]=Управление сетевыми портами I2P и правилами файрвола iptables
+Comment[zh]=管理I2P网络端口和iptables防火墙规则
+Comment[ja]=I2Pネットワークポートとiptablesファイアウォールルールを管理します
+Comment[ko]=I2P 네트워크 포트와 iptables 방화벽 규칙을 관리합니다
+Comment[pt]=Gerenciar portas de rede I2P e regras de firewall iptables
+Comment[it]=Gestisci le porte di rete I2P e le regole del firewall iptables
+Comment[nl]=Beheer I2P-netwerkpoorten en iptables-firewallregels
+Comment[sv]=Hantera I2P-nätverksportar och iptables-brandväggsregler
+Comment[pl]=Zarządzaj portami sieciowymi I2P i regułami zapory iptables
+Exec=gnome-terminal -- bash -c "sudo /usr/bin/i2p-portmanager; exec bash"
+Terminal=true
+Type=Application
+Icon=/usr/share/icons/rift/portmanager.png
+Categories=Network;System;
+StartupNotify=false

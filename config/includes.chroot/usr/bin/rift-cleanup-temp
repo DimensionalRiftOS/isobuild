@@ -1,0 +1,96 @@
+#!/bin/bash
+
+# Temporary files cleanup for Dimensional Rift
+# No logging to avoid traces
+
+# Function to securely wipe files before deletion
+secure_wipe_file() {
+    local file="$1"
+    if [ -f "$file" ]; then
+        # Overwrite with random data then zeros
+        dd if=/dev/urandom of="$file" bs=1K count=1 2>/dev/null
+        dd if=/dev/zero of="$file" bs=1K count=1 2>/dev/null
+        rm -f "$file" 2>/dev/null
+    fi
+}
+
+# Clean /tmp directory with secure wiping
+if [ -d "/tmp" ]; then
+    find /tmp -type f -exec sh -c 'secure_wipe_file "$1"' _ {} \; 2>/dev/null
+    find /tmp -type d -empty -delete 2>/dev/null
+fi
+
+# Clean /var/tmp directory with secure wiping
+if [ -d "/var/tmp" ]; then
+    find /var/tmp -type f -exec sh -c 'secure_wipe_file "$1"' _ {} \; 2>/dev/null
+    find /var/tmp -type d -empty -delete 2>/dev/null
+fi
+
+# Clean user directories
+for user_home in /home/* /root; do
+    if [ -d "$user_home" ]; then
+        # Clean cache directories
+        for cache_dir in "$user_home/.cache" "$user_home/.local/share/Trash" "$user_home/.mozilla/firefox/*/Cache" "$user_home/.config/google-chrome/Default/Cache"; do
+            if [ -d "$cache_dir" ]; then
+                find "$cache_dir" -type f -exec sh -c 'secure_wipe_file "$1"' _ {} \; 2>/dev/null
+                find "$cache_dir" -type d -empty -delete 2>/dev/null
+            fi
+        done
+        
+        # Clean thumbnails
+        for thumb_dir in "$user_home/.thumbnails" "$user_home/.cache/thumbnails"; do
+            if [ -d "$thumb_dir" ]; then
+                find "$thumb_dir" -type f -exec sh -c 'secure_wipe_file "$1"' _ {} \; 2>/dev/null
+            fi
+        done
+        
+        # Clean recently-used and session files
+        for recent_file in "$user_home/.local/share/recently-used.xbel" "$user_home/.recently-used.xbel" "$user_home/.xsession-errors"; do
+            [ -f "$recent_file" ] && secure_wipe_file "$recent_file"
+        done
+        
+        # Clean browser session data
+        for session_dir in "$user_home/.mozilla/firefox/*/sessionstore-backups" "$user_home/.config/google-chrome/Default/Sessions"; do
+            if [ -d "$session_dir" ]; then
+                find "$session_dir" -type f -exec sh -c 'secure_wipe_file "$1"' _ {} \; 2>/dev/null
+            fi
+        done
+        
+        # Clean clipboard history
+        for clipboard_file in "$user_home/.local/share/clipit/history" "$user_home/.clipboard"; do
+            [ -f "$clipboard_file" ] && secure_wipe_file "$clipboard_file"
+        done
+    fi
+done
+
+# Clean system cache directories
+for cache_dir in /var/cache/apt/archives /var/cache/debconf /var/cache/fontconfig /var/cache/man; do
+    if [ -d "$cache_dir" ]; then
+        find "$cache_dir" -type f -name "*.deb" -exec sh -c 'secure_wipe_file "$1"' _ {} \; 2>/dev/null
+        find "$cache_dir" -type f -name "*.cache" -exec sh -c 'secure_wipe_file "$1"' _ {} \; 2>/dev/null
+    fi
+done
+
+# Clean package manager temporary files
+for pkg_temp in /var/lib/apt/lists/partial/* /var/cache/apt/pkgcache.bin /var/cache/apt/srcpkgcache.bin; do
+    [ -f "$pkg_temp" ] && secure_wipe_file "$pkg_temp"
+done
+
+# Clean systemd temporary files
+if [ -d "/run/user" ]; then
+    find /run/user -type f -exec sh -c 'secure_wipe_file "$1"' _ {} \; 2>/dev/null
+fi
+
+# Clean any remaining temporary files
+find /var/tmp /tmp -name "*.tmp" -type f -exec sh -c 'secure_wipe_file "$1"' _ {} \; 2>/dev/null
+find /var/tmp /tmp -name ".*" -type f -exec sh -c 'secure_wipe_file "$1"' _ {} \; 2>/dev/null
+
+# Clean any securonis/cyrethium log directories that might exist
+for log_cleanup_dir in /var/log/cyrethium; do
+    if [ -d "$log_cleanup_dir" ]; then
+        find "$log_cleanup_dir" -type f -exec sh -c 'secure_wipe_file "$1"' _ {} \; 2>/dev/null
+        rm -rf "$log_cleanup_dir" 2>/dev/null
+    fi
+done
+
+exit 0

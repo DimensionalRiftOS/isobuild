@@ -1,0 +1,264 @@
+#!/bin/bash
+
+# Dimensional Rift Anti-Forensic Settings Manager
+# Manage cleanup services for privacy and anti-forensics
+
+# Colors for output
+RED='\033[0;31m'
+GREEN='\033[0;32m'
+YELLOW='\033[1;33m'
+BLUE='\033[0;34m'
+CYAN='\033[0;36m'
+WHITE='\033[1;37m'
+NC='\033[0m' # No Color
+
+# Service names
+SERVICES=("rift-cleanup-logs" "rift-cleanup-swap" "rift-cleanup-temp")
+
+# Check if running as root
+check_root() {
+    if [[ $EUID -eq 0 ]]; then
+        echo -e "${RED}Error: This script should not be run as root for security reasons.${NC}"
+        echo -e "${YELLOW}Please run as a regular user. The script will use sudo when needed.${NC}"
+        exit 1
+    fi
+}
+
+# Check if systemctl is available
+check_systemctl() {
+    if ! command -v systemctl >/dev/null 2>&1; then
+        echo -e "${RED}Error: systemctl not found. This script requires systemd.${NC}"
+        exit 1
+    fi
+}
+
+# Display ASCII banner
+show_banner() {
+    clear
+    echo -e "${CYAN}"
+    echo "╔══════════════════════════════════════════════════════════════╗"
+    echo "║                                                              ║"
+    echo "║              ANTI-FORENSIC SETTINGS MANAGER                  ║"
+    echo "║                                                              ║"
+    echo "╚══════════════════════════════════════════════════════════════╝"
+    echo -e "${NC}"
+}
+
+# Get service status
+get_service_status() {
+    local service="$1"
+    if systemctl is-enabled "$service.service" >/dev/null 2>&1; then
+        if systemctl is-active "$service.service" >/dev/null 2>&1; then
+            echo -e "${GREEN}Active & Enabled${NC}"
+        else
+            echo -e "${YELLOW}Enabled (Inactive)${NC}"
+        fi
+    else
+        echo -e "${RED}Disabled${NC}"
+    fi
+}
+
+# Display current status
+show_status() {
+    echo -e "${WHITE}╔═════════════════════════════════════════════════════════════╗${NC}"
+    echo -e "${WHITE}║                  CURRENT SERVICE STATUS                     ║${NC}"
+    echo -e "${WHITE}╠═══════════════════════════════════╦═════════════════════════╣${NC}"
+    
+    for service in "${SERVICES[@]}"; do
+        status=$(get_service_status "$service")
+        printf "${WHITE}║${NC} %-33s ${WHITE}║${NC} %-21s ${WHITE}║${NC}\n" "$service" "$status"
+    done
+    
+    echo -e "${WHITE}╚═══════════════════════════════════╩═════════════════════════╝${NC}"
+    echo
+}
+
+# Enable a service
+enable_service() {
+    local service="$1"
+    echo -e "${BLUE}Enabling $service...${NC}"
+    
+    if sudo systemctl enable "$service.service" >/dev/null 2>&1; then
+        echo -e "${GREEN}✓ $service enabled successfully${NC}"
+        return 0
+    else
+        echo -e "${RED}✗ Failed to enable $service${NC}"
+        return 1
+    fi
+}
+
+# Disable a service
+disable_service() {
+    local service="$1"
+    echo -e "${BLUE}Disabling $service...${NC}"
+    
+    if sudo systemctl disable "$service.service" >/dev/null 2>&1; then
+        echo -e "${GREEN}✓ $service disabled successfully${NC}"
+        return 0
+    else
+        echo -e "${RED}✗ Failed to disable $service${NC}"
+        return 1
+    fi
+}
+
+# Enable all services
+enable_all() {
+    echo -e "${CYAN}Enabling all anti-forensic cleanup services...${NC}"
+    echo
+    
+    local success=0
+    for service in "${SERVICES[@]}"; do
+        if enable_service "$service"; then
+            ((success++))
+        fi
+    done
+    
+    echo
+    echo -e "${GREEN}Enabled $success out of ${#SERVICES[@]} services${NC}"
+    read -p "Press Enter to continue..."
+}
+
+# Disable all services
+disable_all() {
+    echo -e "${CYAN}Disabling all anti-forensic cleanup services...${NC}"
+    echo
+    
+    local success=0
+    for service in "${SERVICES[@]}"; do
+        if disable_service "$service"; then
+            ((success++))
+        fi
+    done
+    
+    echo
+    echo -e "${GREEN}Disabled $success out of ${#SERVICES[@]} services${NC}"
+    read -p "Press Enter to continue..."
+}
+
+# Individual service management
+manage_individual() {
+    while true; do
+        show_banner
+        echo -e "${WHITE}Individual Service Management${NC}"
+        echo
+        show_status
+        
+        echo -e "${CYAN}Select a service to toggle:${NC}"
+        for i in "${!SERVICES[@]}"; do
+            echo -e "${WHITE}$((i+1)).${NC} ${SERVICES[i]}"
+        done
+        echo -e "${WHITE}$((${#SERVICES[@]}+1)).${NC} Back to main menu"
+        echo
+        
+        read -p "Enter your choice: " choice
+        
+        if [[ "$choice" =~ ^[1-9]+$ ]] && [ "$choice" -le "${#SERVICES[@]}" ]; then
+            local service="${SERVICES[$((choice-1))]}"
+            
+            if systemctl is-enabled "$service.service" >/dev/null 2>&1; then
+                echo -e "${YELLOW}$service is currently enabled. Disable it? (y/N)${NC}"
+                read -p "> " confirm
+                if [[ "$confirm" =~ ^[Yy]$ ]]; then
+                    disable_service "$service"
+                    read -p "Press Enter to continue..."
+                fi
+            else
+                echo -e "${YELLOW}$service is currently disabled. Enable it? (y/N)${NC}"
+                read -p "> " confirm
+                if [[ "$confirm" =~ ^[Yy]$ ]]; then
+                    enable_service "$service"
+                    read -p "Press Enter to continue..."
+                fi
+            fi
+        elif [ "$choice" -eq "$((${#SERVICES[@]}+1))" ]; then
+            break
+        else
+            echo -e "${RED}Invalid choice. Please try again.${NC}"
+            sleep 1
+        fi
+    done
+}
+
+# Show service information
+show_info() {
+    show_banner
+    echo -e "${WHITE}╔═══════════════════════════════════════════════════════════════╗${NC}"
+    echo -e "${WHITE}║                    SERVICE INFORMATION                        ║${NC}"
+    echo -e "${WHITE}╚═══════════════════════════════════════════════════════════════╝${NC}"
+    echo
+    
+    echo -e "${CYAN}rift-cleanup-logs:${NC}"
+    echo "  • Securely wipes system logs during shutdown"
+    echo "  • Removes authentication, system, and application logs"
+    echo "  • Cleans user bash histories and recent files"
+    echo
+    
+    echo -e "${CYAN}rift-cleanup-swap:${NC}"
+    echo "  • Overwrites swap memory with random data"
+    echo "  • Prevents recovery of sensitive data from swap"
+    echo "  • Minimal impact on shutdown time"
+    echo
+    
+    echo -e "${CYAN}rift-cleanup-temp:${NC}"
+    echo "  • Securely wipes temporary files and caches"
+    echo "  • Cleans browser data, thumbnails, and user caches"
+    echo "  • Removes traces of user activity"
+    echo
+    
+    echo -e "${YELLOW}Note: These services run during system shutdown with a 20-second timeout.${NC}"
+    echo -e "${YELLOW}They are optimized for speed but may add 5-15 seconds to shutdown time.${NC}"
+    echo
+    
+    read -p "Press Enter to continue..."
+}
+
+# Main menu
+main_menu() {
+    while true; do
+        show_banner
+        show_status
+        
+        echo -e "${CYAN}Choose an option:${NC}"
+        echo -e "${WHITE}1.${NC} Enable all services"
+        echo -e "${WHITE}2.${NC} Disable all services"
+        echo -e "${WHITE}3.${NC} Manage individual services"
+        echo -e "${WHITE}4.${NC} Show service information"
+        echo -e "${WHITE}5.${NC} Exit"
+        echo
+        
+        read -p "Enter your choice (1-5): " choice
+        
+        case $choice in
+            1)
+                enable_all
+                ;;
+            2)
+                disable_all
+                ;;
+            3)
+                manage_individual
+                ;;
+            4)
+                show_info
+                ;;
+            5)
+                echo -e "${GREEN}Goodbye! Your privacy settings have been updated.${NC}"
+                exit 0
+                ;;
+            *)
+                echo -e "${RED}Invalid option. Please select 1-5.${NC}"
+                sleep 1
+                ;;
+        esac
+    done
+}
+
+# Main execution
+main() {
+    check_root
+    check_systemctl
+    main_menu
+}
+
+# Run main function
+main "$@"

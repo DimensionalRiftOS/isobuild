@@ -1,0 +1,13 @@
+[Desktop Entry]
+Type=Application
+Version=1.0
+Name=Install Dimensional Rift
+GenericName=Dimensional Rift Installer
+Exec=calamares-install-debian
+Comment=Calamares — Installer for Dimensional Rift
+Keywords=calamares;system;install;debian;installer
+Icon=/usr/share/icons/rift/install.png
+Terminal=false
+Categories=Qt;System;
+StartupWMClass=calamares
+StartupNotify=True

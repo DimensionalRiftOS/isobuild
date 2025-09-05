@@ -1,0 +1,15 @@
+[Unit]
+Description=Dimensional Rift Swap Cleanup Service
+DefaultDependencies=false
+Before=shutdown.target reboot.target halt.target
+Conflicts=shutdown.target reboot.target halt.target
+
+[Service]
+Type=oneshot
+ExecStart=/usr/bin/rift-cleanup-swap
+TimeoutStopSec=20s
+StandardOutput=null
+StandardError=null
+
+[Install]
+WantedBy=halt.target reboot.target shutdown.target

@@ -1,0 +1,24 @@
+[Desktop Entry]
+Version=1.0
+Name=Anti-Forensic Settings
+Comment=Manage cleanup services for privacy and anti-forensics
+Comment[tr]=Gizlilik ve anti-forensic için temizleme servislerini yönet
+Comment[es]=Gestionar servicios de limpieza para privacidad y anti-forensics
+Comment[fr]=Gestion des services de nettoyage pour la vie privée et l'anti-forensics
+Comment[de]=Verwaltung von Bereinigungsdiensten für Privatsphäre und Anti-Forensik
+Comment[ar]=إدارة خدمات التنظيف لخصوصية وضمان عدم اكتشاف البيانات
+Comment[ru]=Управление сервисами очистки для конфиденциальности и анти-форензики
+Comment[zh]=管理隐私和反取证的清理服务
+Comment[ja]=プライバシーと反取证のためにクリーンアップサービスを管理します
+Comment[ko]=프라이버시와 안티포렌식을 위한 클리닝 서비스를 관리합니다
+Comment[pt]=Gerencie serviços de limpeza para privacidade e anti-forensics
+Comment[it]=Gestisci i servizi di pulizia per la privacy e l'anti-forensics
+Comment[nl]=Beheer schoonmaakdiensten voor privacy en anti-forensics
+Comment[sv]=Hantera rengöringstjänster för integritet och anti-forensik
+Comment[pl]=Zarządzaj usługami czyszczenia dla prywatności i anty-forensyki
+Exec=gnome-terminal -- bash -c "/usr/bin/rift-antiforensic; exec bash"
+Terminal=true
+Type=Application
+Icon=/usr/share/icons/rift/forensic.png
+Categories=Anti-Forensic;
+StartupNotify=false
